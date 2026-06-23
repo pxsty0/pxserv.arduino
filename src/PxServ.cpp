@@ -38,28 +38,28 @@ PxServ::Callback PxServ::setData(String key, String value)
             https.addHeader("Content-Type", "application/json");
             https.addHeader("apikey", _apiKey);
 
-            JSONVar body;
+            StaticJsonDocument<512> body;
             body["key"] = key;
             body["value"] = value;
+            String bodyStr;
+            serializeJson(body, bodyStr);
 
-            int httpCode = https.POST(JSON.stringify(body));
+            int httpCode = https.POST(bodyStr);
             if (httpCode > 0)
             {
                 String payload = https.getString();
-                JSONVar result = JSON.parse(payload);
+                DynamicJsonDocument result(payload.length() + 256);
+                DeserializationError error = deserializeJson(result, payload);
 
-                if (JSON.typeof(result) != "object")
+                if (error || !result.is<JsonObject>())
                 {
                     callback.status = 400;
                     callback.message = "Response format not appropriate";
                 }
                 else
                 {
-                    int status = result["status"];
-                    String message = result["message"];
-
-                    callback.status = status;
-                    callback.message = message;
+                    callback.status = result["status"].as<int>();
+                    callback.message = result["message"].as<String>();
                 }
 
                 https.end();
@@ -91,27 +91,27 @@ PxServ::Callback PxServ::toggleData(String key)
             https.addHeader("Content-Type", "application/json");
             https.addHeader("apikey", _apiKey);
 
-            JSONVar body;
+            StaticJsonDocument<256> body;
             body["key"] = key;
+            String bodyStr;
+            serializeJson(body, bodyStr);
 
-            int httpCode = https.POST(JSON.stringify(body));
+            int httpCode = https.POST(bodyStr);
             if (httpCode > 0)
             {
                 String payload = https.getString();
-                JSONVar result = JSON.parse(payload);
+                DynamicJsonDocument result(payload.length() + 256);
+                DeserializationError error = deserializeJson(result, payload);
 
-                if (JSON.typeof(result) != "object")
+                if (error || !result.is<JsonObject>())
                 {
                     callback.status = 400;
                     callback.message = "Response format not appropriate";
                 }
                 else
                 {
-                    int status = result["status"];
-                    String message = result["message"];
-
-                    callback.status = status;
-                    callback.message = message;
+                    callback.status = result["status"].as<int>();
+                    callback.message = result["message"].as<String>();
                 }
 
                 https.end();
@@ -143,29 +143,31 @@ PxServ::Callback PxServ::getData(String key)
             https.addHeader("Content-Type", "application/json");
             https.addHeader("apikey", _apiKey);
 
-            JSONVar body;
+            StaticJsonDocument<256> body;
             body["key"] = key;
+            String bodyStr;
+            serializeJson(body, bodyStr);
 
-            int httpCode = https.POST(JSON.stringify(body));
+            int httpCode = https.POST(bodyStr);
             if (httpCode > 0)
             {
                 String payload = https.getString();
-                JSONVar result = JSON.parse(payload);
+                DynamicJsonDocument result(payload.length() + 256);
+                DeserializationError error = deserializeJson(result, payload);
 
-                if (JSON.typeof(result) != "object")
+                if (error || !result.is<JsonObject>())
                 {
                     callback.status = 400;
                     callback.message = "Response format not appropriate";
                 }
                 else
                 {
-                    int status = result["status"];
-                    String message = result["message"];
+                    int status = result["status"].as<int>();
+                    String message = result["message"].as<String>();
 
                     if (status == 200)
                     {
-                        String value = result["data"]["value"];
-                        callback.data = value;
+                        callback.data = result["data"]["value"].as<String>();
                     }
 
                     callback.status = status;
@@ -201,27 +203,27 @@ PxServ::Callback PxServ::removeData(String key)
             https.addHeader("Content-Type", "application/json");
             https.addHeader("apikey", _apiKey);
 
-            JSONVar body;
+            StaticJsonDocument<256> body;
             body["key"] = key;
+            String bodyStr;
+            serializeJson(body, bodyStr);
 
-            int httpCode = https.POST(JSON.stringify(body));
+            int httpCode = https.POST(bodyStr);
             if (httpCode > 0)
             {
                 String payload = https.getString();
-                JSONVar result = JSON.parse(payload);
+                DynamicJsonDocument result(payload.length() + 256);
+                DeserializationError error = deserializeJson(result, payload);
 
-                if (JSON.typeof(result) != "object")
+                if (error || !result.is<JsonObject>())
                 {
                     callback.status = 400;
                     callback.message = "Response format not appropriate";
                 }
                 else
                 {
-                    int status = result["status"];
-                    String message = result["message"];
-
-                    callback.status = status;
-                    callback.message = message;
+                    callback.status = result["status"].as<int>();
+                    callback.message = result["message"].as<String>();
                 }
 
                 https.end();

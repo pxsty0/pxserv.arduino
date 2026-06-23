@@ -1,7 +1,7 @@
 #ifndef PxServ_h
 #define PxServ_h
 
-#include <Arduino_JSON.h>
+#include <ArduinoJson.h>
 #include <Arduino.h>
 
 #if defined(ESP32)
